@@ -465,9 +465,10 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🗳️ Interactive Israeli Election Prediction</h1>
-            <p><strong>Explore how lowering the voting age affects election outcomes</strong></p>
-            <p>Based on 2022 Election Results & Demographics from 1,187 Cities</p>
+            <h1>🗳️ Israeli Election Simulation Model</h1>
+            <p><strong>Interactive Analysis: Voting Age & Demographic Turnout Effects</strong></p>
+            <p>Explore how changing voting age (0-17) and group turnout rates (0-100%) reshape election outcomes</p>
+            <p>Based on 2022 Election Results & Demographics from 1,215 Cities</p>
         </div>
         
         <div class="controls">
@@ -536,7 +537,7 @@
                 </div>
                 <div class="increase-stat">
                     <div class="increase-number" id="voteIncrease">0</div>
-                    <div class="big-label">Vote Increase</div>
+                    <div class="big-label">vs Baseline</div>
                 </div>
             </div>
         </div>
@@ -565,7 +566,7 @@
         </div>
         
         <div class="result-card" style="margin-bottom: 20px;">
-            <h3>🎯 Impact Summary</h3>
+            <h3>🎯 Impact Summary (vs Baseline: Age 18 + Normal Turnout)</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: center;">
                 <div>
                     <div style="font-size: 1.2em; margin-bottom: 10px;"><strong>New Voters</strong></div>
@@ -622,6 +623,9 @@
                 </div>
                 <div class="methodology-item">
                     <strong>Coalition Classification:</strong> Parties classified as Government (Likud, Shas, UTJ, RZP) or Opposition (Yesh Atid, National Unity, etc.)
+                </div>
+                <div class="methodology-item">
+                    <strong>Baseline Reference:</strong> All changes measured against original baseline scenario (voting age 18 + all demographic groups at baseline turnout rates)
                 </div>
                 <div class="methodology-item">
                     <strong>Validation:</strong> Model accounts for 99.7% of actual 2022 election results with realistic demographic distributions
@@ -850,15 +854,9 @@
             const newVotes = newEligibleChildren * demographicData.avgTurnoutRate;
             const totalVotes = turnoutAdjustedVotes + newVotes;
             
-            // Calculate vote increase properly - should be 0 at baseline
-            let voteIncrease;
-            if (votingAge === 18) {
-                // At voting age 18, only count turnout effects
-                voteIncrease = Math.round(turnoutAdjustedVotes - baselineVotes);
-            } else {
-                // For other ages, count both age and turnout effects
-                voteIncrease = Math.round(totalVotes - baselineVotes);
-            }
+            // ALWAYS calculate vote increase from original baseline (age 18 + baseline turnout)
+            const originalBaseline = baselineVotes; // This is age 18 + baseline turnout rates
+            const voteIncrease = Math.round(totalVotes - originalBaseline);
             
             // Overall turnout rate (accounting for all changes)
             const overallTurnoutRate = totalVotes / totalEligibleVoters;
@@ -939,7 +937,7 @@
                 totalVotes: Math.round(totalVotes),
                 totalEligibleVoters: Math.round(totalEligibleVoters),
                 voteIncrease: voteIncrease,
-                percentIncrease: ((totalVotes / baselineVotes - 1) * 100),
+                percentIncrease: ((totalVotes / originalBaseline - 1) * 100),
                 newEligibleVoters: Math.round(newEligibleChildren),
                 newActualVoters: Math.round(newVotes),
                 turnoutRate: overallTurnoutRate,
